@@ -18,6 +18,7 @@
       flex-direction:column; justify-content:center;
       align-items:center; z-index:9999; text-align:center;
     }
+    /* Judul dengan efek shimmer */
     #overlay h1 {
       font-size:2rem; margin-bottom:15px;
       background: linear-gradient(90deg,#00d4ff,#007bff,#00d4ff);
@@ -27,17 +28,30 @@
       animation: shimmer 3s linear infinite, fadeSlide 1s forwards;
       opacity:0;
     }
-    @keyframes shimmer { to { background-position: -200% center; } }
+    @keyframes shimmer {
+      to { background-position: -200% center; }
+    }
+
+    /* Paragraf typing effect */
     #overlay p {
       font-size:1.2rem; margin-bottom:25px;
       white-space: nowrap;
       border-right: 2px solid #00d4ff;
-      width: 0; overflow: hidden; opacity:1;
+      width: 0;
+      overflow: hidden;
+      opacity:1;
       animation: typing 3s steps(40, end) forwards 0.5s,
                  blink 0.75s step-end infinite;
     }
-    @keyframes typing { from { width: 0; } to { width: 100%; } }
-    @keyframes blink { from,to{border-color:transparent;} 50%{border-color:#00d4ff;} }
+    @keyframes typing {
+      from { width: 0; }
+      to   { width: 100%; }
+    }
+    @keyframes blink {
+      from, to { border-color: transparent; }
+      50% { border-color: #00d4ff; }
+    }
+
     #mulaiBtn {
       font-size:1.6rem; padding:15px 40px;
       border:none; border-radius:50px;
@@ -62,13 +76,19 @@
       display:flex; align-items:center; justify-content:center;
     }
     #fullscreenBtn:hover { background:rgba(0,0,0,0.8); }
-    @keyframes fadeSlide { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
-    @keyframes pulse {0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);} }
+
+    @keyframes fadeSlide {
+      from {opacity:0; transform:translateY(20px);}
+      to   {opacity:1; transform:translateY(0);}
+    }
+    @keyframes pulse {
+      0%{transform:scale(1);} 50%{transform:scale(1.05);} 100%{transform:scale(1);}
+    }
   </style>
 </head>
 <body>
   <!-- Musik intro -->
-  <audio id="bgMusic" preload="auto" loop>
+  <audio id="bgMusic" preload="auto" loop muted>
     <source src="intro-musik/opening.mp3" type="audio/mpeg">
   </audio>
 
@@ -93,6 +113,7 @@
     const bgMusic = document.getElementById("bgMusic");
     let hideTimeout;
 
+    // Fullscreen
     function openFullscreen() {
       if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
       else if (document.documentElement.webkitRequestFullscreen) document.documentElement.webkitRequestFullscreen();
@@ -118,6 +139,7 @@
 
     function fadeInMusic(audio, duration = 2000) {
       audio.volume = 0;
+      audio.muted = false;
       audio.play().catch(err => console.log("Autoplay dicegah:", err));
       let step = 0.05;
       let interval = duration / (1 / step);
@@ -135,18 +157,14 @@
       }, interval);
     }
 
-    // Mainkan musik setelah interaksi pertama (klik/tap di mana saja)
-    function startMusic() {
-      if (bgMusic.paused) {
-        bgMusic.currentTime = 0;
-        fadeInMusic(bgMusic, 3000);
-      }
-      document.removeEventListener("click", startMusic);
-      document.removeEventListener("touchstart", startMusic);
+    function startIntroMusicOnce() {
+      fadeInMusic(bgMusic, 3000);
+      document.removeEventListener("click", startIntroMusicOnce);
+      document.removeEventListener("touchstart", startIntroMusicOnce);
     }
     window.addEventListener("load", () => {
-      document.addEventListener("click", startMusic, { once: true });
-      document.addEventListener("touchstart", startMusic, { once: true });
+      document.addEventListener("click", startIntroMusicOnce);
+      document.addEventListener("touchstart", startIntroMusicOnce);
     });
 
     mulaiBtn.addEventListener("click", () => {
@@ -154,7 +172,7 @@
       overlay.style.display = "none";
       content.style.display = "block";
       showButton();
-      setTimeout(() => fadeOutMusic(bgMusic, 3000), 1000);
+      fadeOutMusic(bgMusic, 3000);
     });
 
     fullscreenBtn.addEventListener("click", () => {
