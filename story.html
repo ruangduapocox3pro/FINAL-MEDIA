@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>Hamdallah 2 final rev</title>
+</head>
+<body>
+  <!-- konten storyline tetap -->
+  <div id="preso"></div>
+
+  <!-- Musik utama -->
+  <audio src="musik.mp3" id="bgSong" preload="auto" loop></audio>
+  <script>
+    window.playBgSong = function() {
+      var bgSong = document.getElementById("bgSong");
+      if (bgSong.paused) {
+        bgSong.volume = 0.2;
+        bgSong.play();
+      }
+    };
+  </script>
+</body>
+</html>
